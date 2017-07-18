@@ -22,15 +22,17 @@ This file takes as input either text written in the terminal or a test file, and
 
 We chose to map the content to n = 10 topics, which were defined by the lda model as:
 
-Topic 0 : u'0.050*"book" + 0.026*"read" + 0.016*"charact" + 0.015*"stori" + 0.011*"one" + 0.010*"like" + 0.009*"time" + 0.008*"seri" + 0.007*"end" + 0.007*"would"')
-Topic 1 : u'0.020*"film" + 0.019*"jesu" + 0.013*"movi" + 0.011*"christ" + 0.009*"gibson" + 0.009*"see" + 0.008*"passion" + 0.008*"peopl" + 0.007*"one" + 0.006*"god"')
-Topic 2 : u'0.048*"movi" + 0.023*"film" + 0.015*"one" + 0.013*"watch" + 0.012*"great" + 0.012*"good" + 0.011*"like" + 0.009*"time" + 0.009*"well" + 0.008*"see"')
-Topic 3 : u'0.014*"mysteri" + 0.012*"christi" + 0.011*"murder" + 0.009*"emma" + 0.006*"mr" + 0.006*"novel" + 0.006*"agatha" + 0.006*"one" + 0.005*"poirot" + 0.005*"8217"')
-Topic 4 : u'0.023*"war" + 0.009*"world" + 0.008*"histori" + 0.007*"german" + 0.006*"american" + 0.006*"one" + 0.006*"british" + 0.005*"flashman" + 0.005*"u" + 0.004*"boat"')
-Topic 5 : u'0.059*"quot" + 0.015*"novel" + 0.011*"clanci" + 0.009*"hemingway" + 0.008*"jane" + 0.008*"war" + 0.007*"robert" + 0.007*"one" + 0.007*"jack" + 0.006*"john"')
-Topic 6 : u'0.011*"life" + 0.010*"circu" + 0.008*"stori" + 0.008*"man" + 0.007*"jacob" + 0.007*"love" + 0.007*"old" + 0.006*"one" + 0.005*"charact" + 0.005*"year"')
-Topic 7 : u'0.017*"ann" + 0.014*"mari" + 0.013*"famili" + 0.012*"henri" + 0.012*"histor" + 0.012*"boleyn" + 0.010*"life" + 0.010*"histori" + 0.010*"king" + 0.009*"sister"')
-Topic 8 : u'0.028*"movi" + 0.017*"34" + 0.014*"one" + 0.014*"love" + 0.013*"watch" + 0.013*"great" + 0.011*"time" + 0.010*"good" + 0.009*"like" + 0.009*"dvd"')
-Topic 9 : u'0.022*"film" + 0.011*"movi" + 0.009*"version" + 0.008*"dvd" + 0.008*"one" + 0.006*"scene" + 0.006*"like" + 0.005*"releas" + 0.005*"get" + 0.005*"make"')
+| Topic   | Composition                              |
+| ------- | ---------------------------------------- |
+| Topic 0 | 0.050*"book" + 0.026*"read" + 0.016*"charact" + 0.015*"stori" + 0.011*"one" + 0.010*"like" + 0.009*"time" + 0.008*"seri" + 0.007*"end" + 0.007*"would"' |
+| Topic 1 | 0.020*"film" + 0.019*"jesu" + 0.013*"movi" + 0.011*"christ" + 0.009*"gibson" + 0.009*"see" + 0.008*"passion" + 0.008*"peopl" + 0.007*"one" + 0.006*"god" |
+| Topic 2 | 0.048*"movi" + 0.023*"film" + 0.015*"one" + 0.013*"watch" + 0.012*"great" + 0.012*"good" + 0.011*"like" + 0.009*"time" + 0.009*"well" + 0.008*"see" |
+| Topic 3 | 0.014*"mysteri" + 0.012*"christi" + 0.011*"murder" + 0.009*"emma" + 0.006*"mr" + 0.006*"novel" + 0.006*"agatha" + 0.006*"one" + 0.005*"poirot" + 0.005*"8217" |
+| Topic 4 | 0.023*"war" + 0.009*"world" + 0.008*"histori" + 0.007*"german" + 0.006*"american" + 0.006*"one" + 0.006*"british" + 0.005*"flashman" + 0.005*"u" + 0.004*"boat" |
+| Topic 5 | 0.059*"quot" + 0.015*"novel" + 0.011*"clanci" + 0.009*"hemingway" + 0.008*"jane" + 0.008*"war" + 0.007*"robert" + 0.007*"one" + 0.007*"jack" + 0.006*"john" |
+| Topic 6 | 0.011*"life" + 0.010*"circu" + 0.008*"stori" + 0.008*"man" + 0.007*"jacob" + 0.007*"love" + 0.007*"old" + 0.006*"one" + 0.005*"charact" + 0.005*"year" |
+| Topic 7 | 0.017*"ann" + 0.014*"mari" + 0.013*"famili" + 0.012*"henri" + 0.012*"histor" + 0.012*"boleyn" + 0.010*"life" + 0.010*"histori" + 0.010*"king" + 0.009*"sister" |
+| Topic 8 | 0.028*"movi" + 0.017*"34" + 0.014*"one" + 0.014*"love" + 0.013*"watch" + 0.013*"great" + 0.011*"time" + 0.010*"good" + 0.009*"like" + 0.009*"dvd" |
+| Topic 9 | 0.022*"film" + 0.011*"movi" + 0.009*"version" + 0.008*"dvd" + 0.008*"one" + 0.006*"scene" + 0.006*"like" + 0.005*"releas" + 0.005*"get" + 0.005*"make" |
 
 As we can see, some of these topics consist of specifically book oriented words, others only words that we use when talking about a movie.
