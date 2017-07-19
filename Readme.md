@@ -38,7 +38,7 @@ This file takes as input either text written in the terminal or a test file, and
 
 *text preprocessing*
 
-We have made use of tokenizing, punctuation and stop word removal followed by stemming of words to their roots.
+We have made use of tokenizing, punctuation and stop word removal followed by stemming of words to their roots, followed by converting the document to a bag of words and then applying latent dirichlet model from the [gensim](https://radimrehurek.com/gensim/index.html) package that specializes in topic modelling.
 
 *Models used* : 
 
@@ -65,17 +65,22 @@ Given that the slowest and hence the rate determining step of the script is the 
 
 We chose to map the content to n = 10 topics, which were defined by the lda model as:
 
-| Topic | Composition                              |
-| ----- | ---------------------------------------- |
-| 0     | 0.050*"book" + 0.026*"read" + 0.016*"charact" + 0.015*"stori" + 0.011*"one" + 0.010*"like" + 0.009*"time" + 0.008*"seri" + 0.007*"end" + 0.007*"would"' |
-| 1     | 0.020*"film" + 0.019*"jesu" + 0.013*"movi" + 0.011*"christ" + 0.009*"gibson" + 0.009*"see" + 0.008*"passion" + 0.008*"peopl" + 0.007*"one" + 0.006*"god" |
-| 2     | 0.048*"movi" + 0.023*"film" + 0.015*"one" + 0.013*"watch" + 0.012*"great" + 0.012*"good" + 0.011*"like" + 0.009*"time" + 0.009*"well" + 0.008*"see" |
-| 3     | 0.014*"mysteri" + 0.012*"christi" + 0.011*"murder" + 0.009*"emma" + 0.006*"mr" + 0.006*"novel" + 0.006*"agatha" + 0.006*"one" + 0.005*"poirot" + 0.005*"8217" |
-| 4     | 0.023*"war" + 0.009*"world" + 0.008*"histori" + 0.007*"german" + 0.006*"american" + 0.006*"one" + 0.006*"british" + 0.005*"flashman" + 0.005*"u" + 0.004*"boat" |
-| 5     | 0.059*"quot" + 0.015*"novel" + 0.011*"clanci" + 0.009*"hemingway" + 0.008*"jane" + 0.008*"war" + 0.007*"robert" + 0.007*"one" + 0.007*"jack" + 0.006*"john" |
-| 6     | 0.011*"life" + 0.010*"circu" + 0.008*"stori" + 0.008*"man" + 0.007*"jacob" + 0.007*"love" + 0.007*"old" + 0.006*"one" + 0.005*"charact" + 0.005*"year" |
-| 7     | 0.017*"ann" + 0.014*"mari" + 0.013*"famili" + 0.012*"henri" + 0.012*"histor" + 0.012*"boleyn" + 0.010*"life" + 0.010*"histori" + 0.010*"king" + 0.009*"sister" |
-| 8     | 0.028*"movi" + 0.017*"34" + 0.014*"one" + 0.014*"love" + 0.013*"watch" + 0.013*"great" + 0.011*"time" + 0.010*"good" + 0.009*"like" + 0.009*"dvd" |
-| 9     | 0.022*"film" + 0.011*"movi" + 0.009*"version" + 0.008*"dvd" + 0.008*"one" + 0.006*"scene" + 0.006*"like" + 0.005*"releas" + 0.005*"get" + 0.005*"make" |
+```python
+(0, u'0.036*"circu" + 0.023*"life" + 0.022*"jacob" + 0.020*"stori" + 0.016*"love" + 0.014*"old" + 0.013*"eleph" + 0.013*"anim" + 0.011*"man" + 0.010*"water"')
+(1, u'0.021*"seri" + 0.020*"godzilla" + 0.013*"episod" + 0.012*"u" + 0.010*"german" + 0.010*"war" + 0.010*"monster" + 0.009*"boat" + 0.007*"mothra" + 0.007*"show"')
+(2, u'0.032*"book" + 0.019*"charact" + 0.019*"seri" + 0.014*"martin" + 0.009*"stori" + 0.009*"get" + 0.008*"one" + 0.008*"end" + 0.007*"like" + 0.007*"next"')
+(3, u'0.066*"book" + 0.042*"read" + 0.019*"stori" + 0.015*"charact" + 0.015*"one" + 0.014*"like" + 0.012*"time" + 0.011*"good" + 0.011*"enjoy" + 0.011*"love"')
+(4, u'0.029*"34" + 0.014*"novel" + 0.012*"mar" + 0.012*"clanci" + 0.010*"quot" + 0.009*"ship" + 0.008*"jack" + 0.007*"polit" + 0.007*"charact" + 0.006*"ryan"')
+(5, u'0.029*"war" + 0.010*"world" + 0.008*"american" + 0.005*"one" + 0.005*"histori" + 0.005*"forc" + 0.005*"militari" + 0.004*"battl" + 0.004*"fight" + 0.004*"action"')
+(6, u'0.010*"song" + 0.008*"one" + 0.008*"girl" + 0.008*"music" + 0.008*"get" + 0.008*"like" + 0.006*"love" + 0.006*"time" + 0.006*"best" + 0.006*"video"')
+(7, u'0.034*"dvd" + 0.026*"version" + 0.016*"film" + 0.013*"releas" + 0.012*"edit" + 0.011*"ray" + 0.010*"1" + 0.010*"blu" + 0.010*"origin" + 0.009*"qualiti"')
+(8, u'0.015*"basebal" + 0.012*"play" + 0.010*"boy" + 0.010*"film" + 0.008*"river" + 0.008*"team" + 0.007*"stand" + 0.006*"king" + 0.006*"snake" + 0.006*"game"')
+(9, u'0.060*"movi" + 0.024*"film" + 0.023*"quot" + 0.017*"one" + 0.014*"watch" + 0.014*"great" + 0.013*"good" + 0.013*"like" + 0.010*"time" + 0.009*"love"')
+(10, u'0.009*"flashman" + 0.007*"encount" + 0.006*"alien" + 0.006*"fraser" + 0.005*"maclean" + 0.005*"vincent" + 0.005*"close" + 0.005*"genet" + 0.005*"human" + 0.004*"one"')
+(11, u'0.016*"christma" + 0.011*"leon" + 0.009*"year" + 0.009*"famili" + 0.008*"killer" + 0.008*"girl" + 0.007*"old" + 0.007*"rudolph" + 0.006*"santa" + 0.006*"young"')
+(12, u'0.023*"ann" + 0.021*"mari" + 0.018*"henri" + 0.016*"boleyn" + 0.015*"hemingway" + 0.015*"histor" + 0.014*"king" + 0.014*"famili" + 0.012*"sister" + 0.012*"novel"')
+(13, u'0.009*"one" + 0.008*"charact" + 0.005*"make" + 0.005*"work" + 0.005*"even" + 0.005*"life" + 0.005*"much" + 0.004*"seem" + 0.004*"well" + 0.004*"way"')
+(14, u'0.031*"film" + 0.018*"movi" + 0.018*"jesu" + 0.010*"christ" + 0.009*"see" + 0.008*"gibson" + 0.007*"passion" + 0.007*"one" + 0.007*"peopl" + 0.006*"would"')
+```
 
-As we can see, some of these topics consist of specifically book oriented words, others only words that we use when talking about a movie.
+As we can see, some of these topics like topics [0, 2, 3, 4..] consist of specifically book oriented words like *stori, book, read, charact, novel, etc* and others made of words that we use when talking about a movie like *film, movi, see, dvd..etc*.
