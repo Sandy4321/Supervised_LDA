@@ -38,11 +38,14 @@ def vectorize(test_text, n_topics, len = 1):
     dictionary = gensim.corpora.Dictionary.load('dictionary.dict')
     ldamodel = gensim.models.wrappers.LdaMallet.load('lda_model')
 
+    #make topic printing work
+    # print ldamodel.show_topics()
+
     if len==1:
         corpus_test = dictionary.doc2bow(test_text)
         test_topics = ldamodel[corpus_test]
         test_arr = [t[1] for t in test_topics]
-        feat_df = test_arr
+        feat_df = np.reshape(test_arr, (1,-1))
 
     else:
         corpus_test = [dictionary.doc2bow(text) for text in test_text]
@@ -60,14 +63,10 @@ def classify_text(model, feat_df):
     else:
         return 'Movie'
 
-def classify_df(model, feat_df):
-    labels = loaded_model.predict(feat_df)
-    return labels
-
 
 
 do = raw_input('Write 0 for text input, 1 for csv input\n')
-n_topics = 10
+n_topics = 15
 
 if do=='0':
     text = raw_input('Write your text below\n')
@@ -76,7 +75,7 @@ if do=='0':
     feats = vectorize(text, n_topics, len = 1)
     filename = 'finalized_model.sav'
     loaded_model = pickle.load(open(filename, 'rb'))
-    label = classify_text(loaded_model, feats)
+    label = loaded_model.predict(feat)
     print label
 
 elif do=='1':
@@ -101,7 +100,10 @@ elif do=='1':
 
     filename = 'finalized_model.sav'
     loaded_model = pickle.load(open(filename, 'rb'))
-    pred_labels = classify_df(loaded_model, test_var)
+    pred_labels = loaded_model.predict(test_var)
 
+    print 'roc_auc_score'
+    print metrics.roc_auc_score(test_label, loaded_model.predict_proba(test_var)[:,1])
+    print 'classification accuracy'
     print metrics.accuracy_score(test_label, pred_labels)
     print metrics.confusion_matrix(test_label, pred_labels)

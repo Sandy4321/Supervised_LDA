@@ -10,6 +10,7 @@ import re
 from sklearn import preprocessing
 from sklearn import cross_validation as cv
 from sklearn import metrics
+from sklearn.model_selection import GridSearchCV
 
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
@@ -52,24 +53,19 @@ def print_top_words(model, feature_names, n_top_words):
 
 def text_process_basic(text):
 
-    text = text.replace('\n', ' ')
-    text = re.sub(r' +', r' ', text)
-    text = text.lower()
-    tokens = tokenizer.tokenize(text)
-    tokens = [ch for ch in tokens if ch not in string.punctuation]
-    stopped_tokens = [i for i in tokens if not i in en_stop]
-    text = [p_stemmer.stem(i) for i in stopped_tokens]
+    text = text.replace('\n', ' ') #removing line separators
+    text = re.sub(r' +', r' ', text) #removing spurious spaces
+    text = text.lower() #lower-case text
+    tokens = tokenizer.tokenize(text) #breaking text into tokens
+    tokens = [ch for ch in tokens if ch not in string.punctuation] #removing punctuations
+    stopped_tokens = [i for i in tokens if not i in en_stop] #removing stop words
+    text = [p_stemmer.stem(i) for i in stopped_tokens] #stemming words
     return text
 
 def vectorize(train_text, n_topics, passes, save_model=True):
 
     dictionary = corpora.Dictionary(train_text)
     corpus_train = [dictionary.doc2bow(text) for text in train_text]
-    ##Keep tfidf possibility
-    # tfidf = models.TfidfModel(corpus_train)
-    # print tfidf
-
-    # corpus = gensim.matutils.Dense2Corpus(tfidf)
 
     ldamodel = gensim.models.ldamodel.LdaModel(corpus_train, num_topics=n_topics, id2word = dictionary, passes=passes)
 
@@ -92,8 +88,8 @@ def vectorize(train_text, n_topics, passes, save_model=True):
     # print feat_df
     return feat_df
 
-number_of_topics = 10
-passes = 10
+number_of_topics = 15
+passes = 15
 
 content = pd.read_csv('train.csv', index_col=0)
 content = content.sample(frac=1).reset_index(drop=True)
@@ -118,6 +114,41 @@ dat_label = dat['Label']
 
 X_train, X_test, y_train, y_test = train_test_split(dat_var, dat_label, test_size=0.3, random_state=1)
 # print X_train.head()
+def parameter_search(model, parameters, score=['roc_auc']):
+    tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],
+                     'C': [1, 10, 100, 1000]},
+                    {'kernel': ['linear'], 'C': [1, 10, 100, 1000]}]
+
+    print("# Tuning hyper-parameters for %s" % score)
+    print()
+
+    clf = GridSearchCV(SVC(C=1), tuned_parameters, cv=5,
+                       scoring='%s_macro' % score)
+    clf.fit(X_train, y_train)
+
+    print("Best parameters set found on development set:")
+    print()
+    print(clf.best_params_)
+    print()
+    print("Grid scores on development set:")
+    print()
+    means = clf.cv_results_['mean_test_score']
+    stds = clf.cv_results_['std_test_score']
+    for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+        print("%0.3f (+/-%0.03f) for %r"
+              % (mean, std * 2, params))
+    print()
+
+    print("Detailed classification report:")
+    print()
+    print("The model is trained on the full development set.")
+    print("The scores are computed on the full evaluation set.")
+    print()
+    y_true, y_pred = y_test, clf.predict(X_test)
+    print(classification_report(y_true, y_pred))
+    print()
+
+
 
 skf = cv.StratifiedKFold(y_train, n_folds=3, shuffle=True)
 score_metric = 'roc_auc'
@@ -182,6 +213,7 @@ print "RF = ", roc_auc_score(y_test, Preds_1["RF"])
 print "G_Boost AUC = ", roc_auc_score(y_test, Preds_1["G_Boost"])
 print "Ada_Boost = ", roc_auc_score(y_test, Preds_1["Ada_Boost"])
 
+#Creating an Ensemble Model
 combi_mod = lm.LogisticRegression(C=1e11)
 combi_mod = combi_mod.fit(Preds_1, y_test)
 #
