@@ -1,42 +1,45 @@
-## Supervised Latent Dirichlet Allocation
+## Supervised Latent Dirichlet Allocation 
 
-*Aim* : 
+### Aim 
 
-To use topics derived from latent dirichlet allocation to understand if a review is talking about a Movie or a Book.
+To use topics derived from latent dirichlet allocation to understand if a review is talking about a Movie or a Book. 
 
-*Running Instructions*:
+### Running Instructions
 
-run *test.py* in the terminal. 
+ run *test.py* in the terminal. 
 
 You will be prompted to enter 0/1 based on whether your input is text or a file. If you choose
 
-0 : you are then prmpted to enter text into the terminal
+- `0`: you are then prmpted to enter text into the terminal 
 
-1: you are promted to enter the address of the test csv file, which has a column of reviews and another of labels.
+
+-  `1`: you are promted to enter the address of the test csv file, which has a column of reviews and another of labels. 
 
 If you'd like to run the model on a new test dataset, you can create a new random test_set:
 
-run *read_json.py path_to_json_files number_of_lines outout_filename* in the terminal.
+ run `read_json.py path_to_json_files number_of_lines outout_filename` in the terminal.
 
-The program will randomly sample *number_of_lines*/2 from each of Movies and Books file, to give you a new populated text dataset.
+ The program will randomly sample *number_of_lines*/2 from each of Movies and Books file, to give you a new populated text dataset.
 
-*Datasets* : 
+### Dataset
 
-We used the dataset from this [link](http://jmcauley.ucsd.edu/data/amazon/links.html), which contains product reviews and metadata from Amazon, including 142.8 million reviews spanning May 1996 - July 2014. We only needed the reviews for Books and Movies_TV datasets to be able to create a model that can learn to differentiate between documents talking about one or the other topic.
+ We used the dataset from this [link](http://jmcauley.ucsd.edu/data/amazon/links.html), which contains product reviews and metadata from Amazon, including 142.8 million reviews spanning May 1996 - July 2014. We only needed the reviews for Books and Movies_TV datasets to be able to create a model that can learn to differentiate between documents talking about one or the other topic. 
+
+### Scripts
 
 *read_json.py* : 
 
-This script takes the top K samples from both Books and Movies json files and extracts the reviews along with their label as a dataframe. We use this script to create the training dataset of 20k reviews (10 k for each label) and the testing dataset of 10 k reviews ( 5k for each label)
+This script takes the top K samples from both Books and Movies json files and extracts the reviews along with their label as a dataframe. We use this script to create the training dataset of 20k reviews (10 k for each label) and the testing dataset of 10 k reviews ( 5k for each label) 
 
 *train.py* : 
 
-The train.py file first develops features from the review text and then uses Latent Dirichlet Allocation to extract topics from the Bags of words matrix. The topics are then used as features to train the model. We test several models, including Logistic Regression, Random Forests, Gradient Boost and Adaboost.
+The train.py file first develops features from the review text and then uses Latent Dirichlet Allocation to extract topics from the Bags of words matrix. The topics are then used as features to train the model. We test several models, including Logistic Regression, Random Forests, Gradient Boost and Adaboost. 
 
-*test.py* :
+*test.py* : 
 
 This file takes as input either text written in the terminal or a test file, and outputs the class of the texts. In case of text written in the terminal, it prints out the predicted class, while in case of a text file, it outputs the predictive accuracy of the model and a confusion matrix of the results.
 
-*text preprocessing*
+### Methodology
 
 We have made use of tokenizing, punctuation and stop word removal followed by stemming of words to their roots, followed by converting the document to a bag of words and then applying latent dirichlet model from the [gensim](https://radimrehurek.com/gensim/index.html) package that specializes in topic modelling.
 
@@ -44,24 +47,19 @@ We have made use of tokenizing, punctuation and stop word removal followed by st
 
 We test several models, including Logistic Regression, Random Forests, Gradient Boost and Adaboost, out of which Logistic Regression and Gradient Boost give the best and almost similar results. We can also use an ensemble model if getting a couple of decimal points higher accuracy is worth the extra computational cost.
 
-*Results* :
+### Results 
 
-We use roc_auc as a metric so as to be able to get the performance of the classifier irrespective of the threshold of cutoff between the two classes, but rather on its ability to rank patterns belonging to either class. A reliable and valid AUC estimate can be interpreted as the probability that the classifier will assign a higher score to a randomly chosen positive example than to a randomly chosen negative example from the sample. The final performance of the model on the test set gives us:
+We use roc_auc as a metric so as to be able to get the performance of the classifier irrespective of the threshold of cutoff between the two classes, but rather on its ability to rank patterns belonging to either class. A reliable and valid AUC estimate can be interpreted as the probability that the classifier will assign a higher score to a randomly chosen positive example than to a randomly chosen negative example from the sample. The final performance of the model on the test set gives us: 
 
-an **roc_auc_score** of
+```python
+roc_auc_score
 97.2 %
-and a **classification accuracy** of
-92 %
 
-*Latent Dirichlet Allocation*:
+classification accuracy
+92 % 
+```
 
-Latent Dirichlet Alllocation is a probabilistic topic model with a corresponding generative process. A topic is a distribution over a fixed vocabulary that the documents are expected to be generated out of. We chose to use this technique since it offers an efficient and low loss dimensionality reduction as compared to using bag of word counts or tfidf frequencie over the entire document vocabulary. 
-
-*Scaling with larger corpus*
-
-Given that the slowest and hence the rate determining step of the script is the LDA transformation, it is here that we can make the biggest different in speed. The LDA function in gensim offers the possibility to run the model online where the model is updated in iterations running on chunks of the dataset, which also allows us to account for topic drifts. An even larger speed up can be obtained by running Distributed LDA function over different clusters.
-
-*Latent Dirichlet Allocation Topics* :
+### Latent Dirichlet Allocation Topics
 
 We chose to map the content to n = 10 topics, which were defined by the lda model as:
 
@@ -84,3 +82,11 @@ We chose to map the content to n = 10 topics, which were defined by the lda mode
 ```
 
 As we can see, some of these topics like topics [0, 2, 3, 4..] consist of specifically book oriented words like *stori, book, read, charact, novel, etc* and others made of words that we use when talking about a movie like *film, movi, see, dvd..etc*.
+
+### Latent Dirichlet Allocation 
+
+Latent Dirichlet Alllocation is a probabilistic topic model with a corresponding generative process. A topic is a distribution over a fixed vocabulary that the documents are expected to be generated out of. We chose to use this technique since it offers an efficient and low loss dimensionality reduction as compared to using bag of word counts or tfidf frequencie over the entire document vocabulary. 
+
+### Scaling with larger corpus 
+
+Given that the slowest and hence the rate determining step of the script is the LDA transformation, it is here that we can make the biggest different in speed. The LDA function in gensim offers the possibility to run the model online where the model is updated in iterations running on chunks of the dataset, which also allows us to account for topic drifts. An even larger speed up can be obtained by running Distributed LDA function over different clusters.
