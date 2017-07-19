@@ -61,7 +61,7 @@ classification accuracy
 
 ### Latent Dirichlet Allocation Topics
 
-We chose to map the content to n = 10 topics, which were defined by the lda model as:
+We chose to map the content to n = 15 topics, which were defined by the lda model as:
 
 ```python
 (0, u'0.036*"circu" + 0.023*"life" + 0.022*"jacob" + 0.020*"stori" + 0.016*"love" + 0.014*"old" + 0.013*"eleph" + 0.013*"anim" + 0.011*"man" + 0.010*"water"')
