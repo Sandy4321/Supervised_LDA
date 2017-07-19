@@ -6,7 +6,19 @@ To use topics derived from latent dirichlet allocation to understand if a review
 
 *Running Instructions*:
 
+run *test.py* in the terminal. 
 
+You will be prompted to enter 0/1 based on whether your input is text or a file. If you choose
+
+0 : you are then prmpted to enter text into the terminal
+
+1: you are promted to enter the address of the test csv file, which has a column of reviews and another of labels.
+
+If you'd like to run the model on a new test dataset, you can create a new random test_set:
+
+run *read_json.py path_to_json_files number_of_lines outout_filename* in the terminal.
+
+The program will randomly sample *number_of_lines*/2 from each of Movies and Books file, to give you a new populated text dataset.
 
 *Datasets* : 
 
@@ -32,11 +44,14 @@ We have made use of tokenizing, punctuation and stop word removal followed by st
 
 We test several models, including Logistic Regression, Random Forests, Gradient Boost and Adaboost, out of which Logistic Regression and Gradient Boost give the best and almost similar results. We can also use an ensemble model if getting a couple of decimal points higher accuracy is worth the extra computational cost.
 
-*Time taken by program*
-
 *Results* :
 
-which accuracy metrics did we use and why
+We use roc_auc as a metric so as to be able to get the performance of the classifier irrespective of the threshold of cutoff between the two classes, but rather on its ability to rank patterns belonging to either class. A reliable and valid AUC estimate can be interpreted as the probability that the classifier will assign a higher score to a randomly chosen positive example than to a randomly chosen negative example from the sample. The final performance of the model on the test set gives us:
+
+an **roc_auc_score** of
+97.2 %
+and a **classification accuracy** of
+92 %
 
 *Latent Dirichlet Allocation*:
 
@@ -44,7 +59,7 @@ Latent Dirichlet Alllocation is a probabilistic topic model with a corresponding
 
 *Scaling with larger corpus*
 
-The LDA function in gensim offers the possibility to run the model online where the model is updated in iterations running on chunks of the dataset, which also allows us to account for topic drifts. An even larger speed up can be obtained by running Distributed LDA function over different clusters.
+Given that the slowest and hence the rate determining step of the script is the LDA transformation, it is here that we can make the biggest different in speed. The LDA function in gensim offers the possibility to run the model online where the model is updated in iterations running on chunks of the dataset, which also allows us to account for topic drifts. An even larger speed up can be obtained by running Distributed LDA function over different clusters.
 
 *Latent Dirichlet Allocation Topics* :
 
