@@ -6,7 +6,7 @@ To use topics derived from latent dirichlet allocation to understand if a review
 
 ### Running Instructions
 
- run *test.py* in the terminal. 
+run *test.py* in the terminal. 
 
 You will be prompted to enter 0/1 based on whether your input is text or a file. If you choose
 
@@ -17,9 +17,9 @@ You will be prompted to enter 0/1 based on whether your input is text or a file.
 
 If you'd like to run the model on a new test dataset, you can create a new random test_set:
 
- run `read_json.py path_to_json_files number_of_lines outout_filename` in the terminal.
+ run `read_json.py path_to_json_files number_of_lines output_filename` in the terminal.
 
- The program will randomly sample *number_of_lines*/2 from each of Movies and Books file, to give you a new populated text dataset.
+The program will randomly sample *number_of_lines*/2 from each of Movies and Books file, to give you a newly populated text dataset.
 
 ### Dataset
 
