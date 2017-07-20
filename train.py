@@ -1,10 +1,10 @@
-
-
 import pandas as pd
 import numpy as np
 import string
 import gensim
 import pickle
+import time
+
 # import xgboost as xgb
 import re
 from sklearn import preprocessing
@@ -36,6 +36,8 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.svm import SVC
 from sklearn import linear_model as lm
+
+start = time.clock()
 
 tokenizer = RegexpTokenizer(r'\w+')
 p_stemmer = PorterStemmer()
@@ -102,6 +104,9 @@ content['Text'] = content['Text'].apply(lambda x: text_process_basic(x))
 topic_model_df = vectorize(content['Text'].tolist(), number_of_topics, passes, save_model=True)
 dat = pd.concat([content, topic_model_df], axis=1)
 
+step_2 = time.clock()
+print step_2 - start
+print
 print dat.head()
 
 dat['Label'] = dat['Label'].apply(lambda x: 1 if x=='Books' else 0)
@@ -114,41 +119,6 @@ dat_label = dat['Label']
 
 X_train, X_test, y_train, y_test = train_test_split(dat_var, dat_label, test_size=0.3, random_state=1)
 # print X_train.head()
-def parameter_search(model, parameters, score=['roc_auc']):
-    tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],
-                     'C': [1, 10, 100, 1000]},
-                    {'kernel': ['linear'], 'C': [1, 10, 100, 1000]}]
-
-    print("# Tuning hyper-parameters for %s" % score)
-    print()
-
-    clf = GridSearchCV(SVC(C=1), tuned_parameters, cv=5,
-                       scoring='%s_macro' % score)
-    clf.fit(X_train, y_train)
-
-    print("Best parameters set found on development set:")
-    print()
-    print(clf.best_params_)
-    print()
-    print("Grid scores on development set:")
-    print()
-    means = clf.cv_results_['mean_test_score']
-    stds = clf.cv_results_['std_test_score']
-    for mean, std, params in zip(means, stds, clf.cv_results_['params']):
-        print("%0.3f (+/-%0.03f) for %r"
-              % (mean, std * 2, params))
-    print()
-
-    print("Detailed classification report:")
-    print()
-    print("The model is trained on the full development set.")
-    print("The scores are computed on the full evaluation set.")
-    print()
-    y_true, y_pred = y_test, clf.predict(X_test)
-    print(classification_report(y_true, y_pred))
-    print()
-
-
 
 skf = cv.StratifiedKFold(y_train, n_folds=3, shuffle=True)
 score_metric = 'roc_auc'
@@ -173,6 +143,51 @@ print "Ada Boost Done"
 model_scores = pd.DataFrame(scores).mean()
 print model_scores
 
+step_3 = time.clock()
+print step_3 - step_2
+
+def parameter_search(model, score='roc_auc'):
+
+    if model=='LogisticRegression':
+        tuned_parameters = [{'C': [1, 10, 100]}]
+
+        print "# Tuning hyper-parameters for {}".format(score)
+
+        clf = GridSearchCV(LogisticRegression(C=1), tuned_parameters, cv=5,
+                           scoring='%s' % score)
+
+    elif model=='GradientBoostingClassifier':
+
+        tuned_parameters = [{'n_estimators': [150, 250, 500],'min_samples_split': [2, 30, 100]}]
+
+        print "# Tuning hyper-parameters for {}".format(score)
+
+        clf = GridSearchCV(GradientBoostingClassifier(n_estimators=100), tuned_parameters, cv=5,
+                           scoring='%s' % score)
+
+    clf.fit(X_train, y_train)
+
+    print "Best parameters set found on development set:"
+
+    print clf.best_params_
+
+    print "Grid scores on development set:"
+    print
+    means = clf.cv_results_['mean_test_score']
+    stds = clf.cv_results_['std_test_score']
+    for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+        print "{} (+/-{}) for {}".format(mean, std * 2, params)
+
+    y_true, y_pred = y_test, clf.predict(X_test)
+    print roc_auc_score(y_true, y_pred)
+    print
+
+parameter_search('LogisticRegression', 'roc_auc')
+
+parameter_search('GradientBoostingClassifier', 'roc_auc')
+
+step_4 = time.clock()
+print step_4 - step_3
 # gb = GradientBoostingClassifier()
 # gb = gb.fit(train_vars, train_class)
 #
@@ -226,3 +241,6 @@ print pred_binary[:5]
 
 print metrics.accuracy_score(y_test, pred_binary)
 print metrics.confusion_matrix(y_test, pred_binary)
+
+step_5 = time.clock()
+print step_5 - step_4
