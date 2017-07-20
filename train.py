@@ -105,6 +105,7 @@ topic_model_df = vectorize(content['Text'].tolist(), number_of_topics, passes, s
 dat = pd.concat([content, topic_model_df], axis=1)
 
 step_2 = time.clock()
+print 'time elapsed'
 print step_2 - start
 print
 print dat.head()
@@ -144,21 +145,24 @@ model_scores = pd.DataFrame(scores).mean()
 print model_scores
 
 step_3 = time.clock()
+print 'time elapsed'
 print step_3 - step_2
 
-def parameter_search(model, score='roc_auc'):
+def parameter_search(X_train, y_train, model, score='roc_auc'):
 
     if model=='LogisticRegression':
-        tuned_parameters = [{'C': [1, 10, 100]}]
+        tuned_parameters = [{'C': [0.1, 1, 10, 100]}]
 
         print "# Tuning hyper-parameters for {}".format(score)
 
-        clf = GridSearchCV(LogisticRegression(C=1), tuned_parameters, cv=5,
-                           scoring='%s' % score)
+        clf = GridSearchCV(LogisticRegression(penalty='l2'), tuned_parameters, cv=5,
+                           scoring='{}'.format(score))
 
     elif model=='GradientBoostingClassifier':
 
-        tuned_parameters = [{'n_estimators': [150, 250, 500],'min_samples_split': [2, 30, 100]}]
+        tuned_parameters = [{'learning_rate': [0.1, 0.05, 0.01],
+                            'max_depth': [5, 10, 15],
+                            'min_samples_split': [20, 60, 100]}]
 
         print "# Tuning hyper-parameters for {}".format(score)
 
@@ -182,11 +186,12 @@ def parameter_search(model, score='roc_auc'):
     print roc_auc_score(y_true, y_pred)
     print
 
-parameter_search('LogisticRegression', 'roc_auc')
+parameter_search(X_train, y_train, 'LogisticRegression', 'roc_auc')
 
-parameter_search('GradientBoostingClassifier', 'roc_auc')
+parameter_search(X_train, y_train, 'GradientBoostingClassifier', 'roc_auc')
 
 step_4 = time.clock()
+print 'time elapsed'
 print step_4 - step_3
 # gb = GradientBoostingClassifier()
 # gb = gb.fit(train_vars, train_class)
@@ -243,4 +248,5 @@ print metrics.accuracy_score(y_test, pred_binary)
 print metrics.confusion_matrix(y_test, pred_binary)
 
 step_5 = time.clock()
+print 'time elapsed'
 print step_5 - step_4
